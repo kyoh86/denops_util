@@ -1,29 +1,6 @@
 import type { Denops } from "https://deno.land/x/ddu_vim@v3.8.1/deps.ts";
 import { TextLineStream } from "https://deno.land/std@0.208.0/streams/text_line_stream.ts";
-import {
-  echo,
-  echoerr,
-} from "https://deno.land/x/denops_std@v5.1.0/helper/mod.ts";
-
-class MessageStream extends WritableStream<string> {
-  constructor(denops: Denops) {
-    super({
-      write: async (chunk, _controller) => {
-        await echo(denops, chunk);
-      },
-    });
-  }
-}
-
-class WarnStream extends WritableStream<string> {
-  constructor(denops: Denops) {
-    super({
-      write: async (chunk, _controller) => {
-        await echoerr(denops, chunk);
-      },
-    });
-  }
-}
+import { echomsg } from "./echomsg.ts";
 
 /**
  * Pipe the output of the external command to the message window.
@@ -47,11 +24,23 @@ export async function pipe(
       stderr
         .pipeThrough(new TextDecoderStream())
         .pipeThrough(new TextLineStream())
-        .pipeTo(new WarnStream(denops));
+        .pipeTo(
+          new WritableStream<string>({
+            write: async (chunk, _controller) => {
+              await echomsg(denops, chunk, "ErrorMsg");
+            },
+          }),
+        );
     }
   });
   await stdout
     .pipeThrough(new TextDecoderStream())
     .pipeThrough(new TextLineStream())
-    .pipeTo(new MessageStream(denops));
+    .pipeTo(
+      new WritableStream<string>({
+        write: async (chunk, _controller) => {
+          await echomsg(denops, chunk);
+        },
+      }),
+    );
 }
