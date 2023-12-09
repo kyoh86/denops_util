@@ -19,7 +19,7 @@ export class EchomsgStream extends WritableStream<string> {
     this.lines = [];
   }
   public async finalize(denops: Denops) {
-    await echo(denops, this.lines.join());
+    await echo(denops, this.lines.join().trim());
     this.clearLines();
   }
 }
