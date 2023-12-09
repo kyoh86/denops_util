@@ -1,0 +1,8 @@
+{
+  "name": "denops-util",
+  "version": "0.0.1",
+  "description": "A set of denops utils just for me",
+  "tasks": {
+    "dev": "deno run --watch main.ts"
+  }
+}
