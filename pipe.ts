@@ -21,18 +21,21 @@ export async function pipe(
   }).spawn();
   const stderrStream = new EchomsgStream(denops, "ErrorMsg");
   const stdoutStream = new EchomsgStream(denops);
-  status.then((stat) => {
-    if (!stat.success) {
-      stderr
-        .pipeThrough(new TextDecoderStream())
-        .pipeThrough(new TextLineStream())
-        .pipeTo(stderrStream);
-    }
-  });
-  await stdout
-    .pipeThrough(new TextDecoderStream())
-    .pipeThrough(new TextLineStream())
-    .pipeTo(stdoutStream);
+  await Promise.all([
+    status.then((stat) => {
+      if (!stat.success) {
+        stderr
+          .pipeThrough(new TextDecoderStream())
+          .pipeThrough(new TextLineStream())
+          .pipeTo(stderrStream);
+      }
+    }),
+    stdout
+      .pipeThrough(new TextDecoderStream())
+      .pipeThrough(new TextLineStream())
+      .pipeTo(stdoutStream),
+  ]);
+
   await stdoutStream.finalize(denops);
   await stderrStream.finalize(denops);
 }
