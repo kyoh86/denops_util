@@ -19,10 +19,11 @@ export class EchomsgStream extends WritableStream<string> {
     this.lines = [];
   }
   public async finalize(denops: Denops) {
-    if (this.lines.length === 0) {
+    const content = this.lines.join("\n").trim();
+    if (content === "") {
       return;
     }
-    await echo(denops, this.lines.join().trim());
+    await echo(denops, content);
     this.clearLines();
   }
 }
