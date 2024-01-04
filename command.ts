@@ -17,7 +17,7 @@ export async function echoallCommand(
   const stdoutStream = new EchomsgStream(denops);
   await Promise.all([
     wait,
-    stdout.pipeTo(stdoutStream),
+    stdout.pipeThrough(new TextLineStream()).pipeTo(stdoutStream),
   ]);
   await stdoutStream.finalize(denops);
 }
@@ -43,9 +43,7 @@ export function echoerrCommand(
   const stderrStream = new EchomsgStream(denops, "ErrorMsg");
 
   return {
-    stdout: stdout
-      .pipeThrough(new TextDecoderStream())
-      .pipeThrough(new TextLineStream()),
+    stdout: stdout.pipeThrough(new TextDecoderStream()),
     wait: status.then((stat) => {
       if (!stat.success) {
         stderr
