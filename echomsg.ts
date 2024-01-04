@@ -6,7 +6,7 @@ export async function echomsg(denops: Denops, msg: string, highlight?: string) {
     if (highlight) {
       await denops.cmd("echohl highlight", { highlight });
     }
-    await denops.cmd("echomsg msg", { msg });
+    await denops.cmd(`echomsg [${denops.name}] msg`, { msg });
     if (highlight) {
       await denops.cmd("echohl None");
     }
