@@ -1,4 +1,3 @@
-# denops_util
+# RENAMED
 
-It's a set of denops utils just for me. I will make destructive changes without
-any notice.
+MOVED TO [denops-util](https://github.com/kyoh86/denops-util)
